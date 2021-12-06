@@ -2,11 +2,11 @@ from flask import Flask, render_template, request
 import os
 import json 
 app = Flask(__name__)
-
-@app.route('/prdictions', methods=['POST','GET'])
+CURRENT_FOLDER = os.path.dirname(os.path.abspath(__file__))
+@app.route('/', methods=['POST','GET'])
 def predict():
     result = os.system("""
-    python fairseq/scripts/spm_encode.py \
+    python """+CURRENT_FOLDER+"""/fairseq/scripts/spm_encode.py \
     --model model/sentence.bpe.model \
     --inputs Data/test.good Data/test.bad \
     --outputs model/spm/test.bpe.good model/spm/test.bpe.bad
@@ -22,7 +22,7 @@ def predict():
                                 --thresholdtgt 0 \
                                 --thresholdsrc 0 \
                                 --workers 70""")
-                                
+
     print("SPM Encode: ", result)
     print("Preprocess: ", preprocess)
     return json.dumps({
